@@ -4,7 +4,7 @@ let time = getData("time") || {}
 
 // Setup Weather, Temperature, Date and Time on screen
 document.querySelector('#tempText').innerHTML = `<img id="weatherIcon">${weather.temperature || 0}&deg;`
-document.querySelector('#weatherIcon').src = `img/icons/${weather.weather}.png`
+document.querySelector('#weatherIcon').src = `img/icons/${weather.weather || "113"}.png`
 document.querySelector('#time').innerHTML = time.time || "00:00:00"
 document.querySelector('#date').innerHTML = time.date || "1st January 2020"
 
@@ -17,14 +17,14 @@ setInterval(() => getTemp, 5.4e+6)
 getTemp()
 
 // Setup Alarm Settings GUI
-document.getElementById("alarmHours").innerHTML = getData("alarm").time ? getData("alarm").time.split(":")[0] : "00"
-document.getElementById("alarmMinutes").innerHTML = getData("alarm").time ? getData("alarm").time.split(":")[1] : "00"
+document.getElementById("alarmHours").innerHTML = (getData("alarm") || {}).time ? getData("alarm").time.split(":")[0] : "00"
+document.getElementById("alarmMinutes").innerHTML = (getData("alarm") || {}).time ? getData("alarm").time.split(":")[1] : "00"
 document.getElementById("alarmMinutes").classList.toggle("Time-Selected");
 selectTime(`alarmHours`)
 
 // Setup System Tray
-document.getElementById("alarmActiveIcon").innerHTML = getData("alarm").time ? `&#9835;` : ``
-document.getElementById("alarmActiveText").innerHTML = getData("alarm").time ? `${getData("alarm").time}` : ``
+document.getElementById("alarmActiveIcon").innerHTML = (getData("alarm") || {}).time ? `&#9835;` : ``
+document.getElementById("alarmActiveText").innerHTML = (getData("alarm") || {}).time ? `${getData("alarm").time}` : ``
 
 // Database
 function setData(itemName, itemValue) {
@@ -63,7 +63,7 @@ function dateOrdinal(date) {
 function getTimeDate() {
     var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
     var date = new Date()
-    var alarm = getData("alarm").time
+    var alarm = (getData("alarm") || {}).time || ""
     if (alarm) if (`${alarm}:00` == date.toLocaleTimeString()) {
         var mode = getData("alarmMode") ? getData("alarmMode") : {}
         if (mode.mode == 1 && (mode.set ? new Date(mode.set).toDateString() : "") == date.toDateString()) startAlarm()
@@ -85,8 +85,8 @@ async function getTemp() {
         var weatherData = await fetch(`http://api.weatherstack.com/current?access_key=576392cf219bfe67484e6ff817395894&query=${encodeURI(locationResponse.city)}`)
         var weatherResponse = await weatherData.json()
         setData("weather", { temperature: weatherResponse.current.temperature, weather: weatherResponse.current.weather_code });
-        document.querySelector('#tempText').innerHTML = `<img id="weatherIcon">${weatherResponse.current.temperature}&deg;`
-        document.querySelector('#weatherIcon').src = `img/icons/${weatherResponse.current.weather_code}.png`
+        document.querySelector('#tempText').innerHTML = `<img id="weatherIcon">${weatherResponse.current.temperature || 0}&deg;`
+        document.querySelector('#weatherIcon').src = `img/icons/${weatherResponse.current.weather_code || "113"}.png`
     } catch {
         console.error(`ERROR: Couldn't update temperature`)
     }
