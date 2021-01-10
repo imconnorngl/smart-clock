@@ -82,7 +82,7 @@ async function getTemp() {
     try {
         var locationData = await fetch("http://ipinfo.io/json")
         var locationResponse = await locationData.json()
-        var weatherData = await fetch(`http://api.weatherstack.com/current?access_key=576392cf219bfe67484e6ff817395894&query=${encodeURI(locationResponse.city)}`)
+        var weatherData = await fetch(`http://api.weatherstack.com/current?access_key=<APIKEY>&query=${encodeURI(locationResponse.city)}`)
         var weatherResponse = await weatherData.json()
         setData("weather", { temperature: weatherResponse.current.temperature, weather: weatherResponse.current.weather_code });
         document.querySelector('#tempText').innerHTML = `<img id="weatherIcon">${weatherResponse.current.temperature || 0}&deg;`
